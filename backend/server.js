@@ -31,6 +31,7 @@ const reportRoutes = require('./routes/reportRoutes');
 const metaRoutes = require('./routes/metaRoutes');
 const contactRoutes = require('./routes/contactRoutes');
 const superAdminRoutes = require('./routes/superAdminRoutes');
+const accessibilityRoutes = require('./routes/accessibilityRoutes');
 
 
 // Create Express App
@@ -99,6 +100,7 @@ app.use('/api/meta', metaRoutes);
 app.use('/api/contact', contactRoutes);
 app.use('/api/super-admin', superAdminRoutes);
 app.use('/api/user', require('./routes/roleManagement'));
+app.use('/api/accessibility', accessibilityRoutes);
 
 
 // Catch-all: send React index.html for any non-API route

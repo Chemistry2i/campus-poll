@@ -67,6 +67,7 @@ import { FaMoon, FaSun } from "react-icons/fa";
 import useSocket from '../hooks/useSocket';
 import getImageUrl from '../utils/getImageUrl';
 import ElectionCard from '../components/student/ElectionCard';
+import { CandidateListenButton, VoiceVoteButton } from '../components/student';
 
 function StudentDashboard({ user }) {
   const { isDarkMode, toggleTheme, colors } = useTheme();
@@ -574,7 +575,7 @@ function StudentDashboard({ user }) {
             : 'linear-gradient(135deg, #3b82f6 0%, #1d4ed8 100%)',
           color: '#fff',
           borderRadius: '12px',
-          padding: window.innerWidth <= 768 ? '1.5rem 2rem' : '2.5rem 3.5rem',
+          padding: window.innerWidth <= 768 ? '1.5rem 1.5rem' : '2.5rem 3.5rem',
           boxShadow: '0 4px 6px rgba(0, 0, 0, 0.1)',
           overflow: 'hidden'
         }}
@@ -1788,7 +1789,7 @@ function StudentDashboard({ user }) {
         {/* Sidebar for large screens */}
         <div className="shadow-sm border-end d-none d-lg-block"
              style={{
-               width: '280px',
+               width: '300px',
                minWidth: '280px',
                maxWidth: '280px',
                height: '100%',
@@ -1845,11 +1846,13 @@ function StudentDashboard({ user }) {
                 <div className="fw-bold" style={{ color: colors.text, fontSize: '1.1rem', marginBottom: '0.25rem' }}>
                   {user?.name || 'Student'}
                 </div>
-                <div style={{ 
+                <div className="btn btn-primary btn-sm rounded-pill" style={{ 
                   fontSize: '0.85rem', 
-                  color: '#3b82f6',
+                  color: 'white',
                   fontWeight: '500',
-                  marginBottom: '0.25rem'
+                  marginBottom: '0.25rem',
+                  
+
                 }}>
                   🎓 Student
                 </div>
@@ -1895,7 +1898,7 @@ function StudentDashboard({ user }) {
                       justifyContent: 'space-between',
                       width: '100%',
                       padding: '0.6rem 0.8rem',
-                      marginBottom: '0.3rem',
+                      marginBottom: '0.1rem',
                       borderRadius: '8px',
                       textDecoration: 'none',
                       border: 'none',
@@ -1937,8 +1940,8 @@ function StudentDashboard({ user }) {
           </div>
           {/* Sidebar Footer */}
           <div style={{ 
-            marginTop: '1rem', 
-            paddingTop: '1rem', 
+            marginTop: '0.5rem', 
+            paddingTop: '0.5rem', 
             paddingLeft: '1.5rem',
             paddingRight: '1.5rem',
             paddingBottom: '1.5rem',
@@ -2098,9 +2101,9 @@ function StudentDashboard({ user }) {
               }}>
                 {user?.name || 'Student'}
               </div>
-              <div style={{ 
+              <div className="btn btn-sm btn-primary" style={{ 
                 fontSize: '0.7rem', 
-                color: '#3b82f6',
+                color: 'white',
                 fontWeight: '500',
                 marginBottom: '0.2rem'
               }}>
@@ -2156,7 +2159,7 @@ function StudentDashboard({ user }) {
                       background: activeView === item.id ? colors.primary : 'transparent',
                       color: activeView === item.id ? '#fff' : isDarkMode ? colors.text : '#212529',
                       transition: 'all 0.2s ease',
-                      padding: '0.6rem 0.75rem',
+                      padding: '0.5rem 0.75rem',
                       fontSize: '0.85rem',
                       borderRadius: '8px'
                     }}
@@ -2190,10 +2193,10 @@ function StudentDashboard({ user }) {
               })}
             </nav>
             {/* Mobile Sidebar Logout Button */}
-            <div className="mt-2 pt-2" style={{ borderTop: `1px solid ${isDarkMode ? colors.border : '#dee2e6'}` }}>
+            <div className="mt-1 pt-1" style={{ borderTop: `1px solid ${isDarkMode ? colors.border : '#dee2e6'}` }}>
               {/* Sidebar Footer */}
 <div style={{ 
-  // marginTop: '1rem', 
+  // marginTop: '-1rem', 
   padding: '1rem 1.5rem 1.5rem', // Shorthand for top, sides, bottom
   // borderTop: `1px solid ${colors.border}`,
   // zIndex: 2000,
@@ -2585,6 +2588,9 @@ function StudentDashboard({ user }) {
                                               </>
                                             ) : candidate.manifesto}
                                           </div>
+                                          <div className="mt-2">
+                                            <CandidateListenButton text={candidate.manifesto} compact label="Listen Manifesto" />
+                                          </div>
                                         </div>
                                       )}
                                       
@@ -2804,6 +2810,11 @@ function StudentDashboard({ user }) {
                                           </div>
                                         </div>
                                       )}
+                                      {candidate.manifesto && (
+                                        <div className="mb-3">
+                                          <CandidateListenButton text={candidate.manifesto} compact label="Listen Manifesto" />
+                                        </div>
+                                      )}
                                       
                                       {typeof candidate.votes === "number" && (
                                         <div className="mb-3">
@@ -2888,6 +2899,23 @@ function StudentDashboard({ user }) {
                   >
                     Close
                   </button>
+                  {selectedElection && getElectionStatus(selectedElection).status === 'active' && 
+                   !myVotes.some((v) => v.election === selectedElection._id) && (
+                    <VoiceVoteButton
+                      electionId={selectedElection._id || selectedElection.id}
+                      candidates={(selectedElection.candidates || []).filter((c) => c.status === 'approved')}
+                      label="Voice Vote"
+                      className="btn btn-outline-primary d-flex align-items-center gap-2"
+                      onVote={({ electionId, candidateId }) => {
+                        const match = (selectedElection.candidates || []).find((c) => (c._id || c.id) === candidateId);
+                        if (match) {
+                          setSelectedCandidateForVoting(match);
+                          setVotingStep(2);
+                          setShowVotingModal(true);
+                        }
+                      }}
+                    />
+                  )}
                   {selectedElection && getElectionStatus(selectedElection).status === 'active' && 
                    !myVotes.some((v) => v.election === selectedElection._id) && (
                     <button 
@@ -2975,6 +3003,9 @@ function StudentDashboard({ user }) {
                         </h5>
                         <div className={`p-3 rounded`} style={{ background: isDarkMode ? colors.surfaceHover : '#f8f9fa', border: `1px solid ${isDarkMode ? colors.border : '#e9ecef'}` }}>
                           <p className="mb-0" style={{ lineHeight: 1.6, fontSize: window.innerWidth <= 768 ? '0.8rem' : '0.9rem' }}>{selectedCandidateForVoting.manifesto}</p>
+                        </div>
+                        <div className="mt-2">
+                          <CandidateListenButton text={selectedCandidateForVoting.manifesto} compact label="Listen Manifesto" />
                         </div>
                       </div>
                     )}

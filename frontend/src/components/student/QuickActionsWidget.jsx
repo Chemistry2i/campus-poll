@@ -12,14 +12,14 @@ const QuickActionsWidget = ({ activeElections, onNavigate, onVote }) => {
     <>
       {/* Floating Action Button */}
       <button
-        className="btn btn-primary rounded-circle shadow-lg"
+        className="btn btn-primary rounded-circle shadow-lg quick-action-btn"
         onClick={() => setIsOpen(!isOpen)}
         style={{
           position: 'fixed',
-          bottom: '24px',
-          right: '24px',
-          width: '56px',
-          height: '56px',
+          bottom: '80px',
+          left: '20px',
+          width: '52px',
+          height: '52px',
           display: 'flex',
           alignItems: 'center',
           justifyContent: 'center',
@@ -36,23 +36,25 @@ const QuickActionsWidget = ({ activeElections, onNavigate, onVote }) => {
           e.currentTarget.style.transform = isOpen ? 'rotate(45deg)' : 'scale(1)';
         }}
       >
-        {isOpen ? <FaTimes size={24} /> : <FaBolt size={24} />}
+        {isOpen ? <FaTimes size={22} /> : <FaBolt size={22} />}
       </button>
 
       {/* Quick Actions Menu */}
       {isOpen && (
         <>
           <div
+            className="quick-action-menu"
             style={{
               position: 'fixed',
-              bottom: '90px',
-              right: '24px',
+              bottom: '145px',
+              left: '20px',
               background: isDarkMode ? colors.surface : '#fff',
-              borderRadius: '12px',
+              borderRadius: '14px',
               boxShadow: '0 10px 40px rgba(0,0,0,0.2)',
-              padding: '16px',
+              padding: '18px',
               zIndex: 999,
               minWidth: '280px',
+              maxWidth: '320px',
               border: `1px solid ${isDarkMode ? colors.border : '#e9ecef'}`,
               animation: 'slideUp 0.3s ease-out'
             }}
@@ -139,6 +141,66 @@ const QuickActionsWidget = ({ activeElections, onNavigate, onVote }) => {
           to {
             opacity: 1;
             transform: translateY(0);
+          }
+        }
+
+        @media (max-width: 768px) {
+          .quick-action-btn {
+            width: 46px !important;
+            height: 46px !important;
+            bottom: 70px !important;
+            left: 16px !important;
+          }
+
+          .quick-action-menu {
+            bottom: 125px !important;
+            left: 16px !important;
+            max-width: calc(100vw - 32px) !important;
+            min-width: 260px !important;
+            padding: 16px !important;
+          }
+
+          .quick-action-menu h6 {
+            font-size: 15px !important;
+          }
+
+          .quick-action-menu .btn {
+            font-size: 13px !important;
+          }
+        }
+
+        @media (max-width: 480px) {
+          .quick-action-btn {
+            width: 42px !important;
+            height: 42px !important;
+            bottom: 65px !important;
+            left: 12px !important;
+          }
+
+          .quick-action-menu {
+            bottom: 115px !important;
+            left: 12px !important;
+            right: 12px !important;
+            min-width: auto !important;
+            max-width: calc(100vw - 24px) !important;
+            padding: 14px !important;
+          }
+
+          .quick-action-menu h6 {
+            font-size: 14px !important;
+          }
+
+          .quick-action-menu .btn {
+            font-size: 12px !important;
+            padding: 8px 10px !important;
+          }
+
+          .quick-action-menu .small {
+            font-size: 11px !important;
+          }
+
+          .quick-action-menu .text-muted {
+            font-size: 10px !important;
           }
         }
       `}</style>

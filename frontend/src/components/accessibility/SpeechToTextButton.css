@@ -1,0 +1,247 @@
+/* frontend/src/components/accessibility/SpeechToTextButton.css */
+
+.stt-button-container {
+  display: inline-block;
+  position: relative;
+}
+
+.stt-button {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 8px 16px;
+  background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+  color: white;
+  border: none;
+  border-radius: 6px;
+  cursor: pointer;
+  font-size: 14px;
+  font-weight: 500;
+  transition: all 0.3s ease;
+  box-shadow: 0 2px 8px rgba(245, 87, 108, 0.3);
+}
+
+.stt-button:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(245, 87, 108, 0.5);
+}
+
+.stt-button:active {
+  transform: translateY(0);
+}
+
+.stt-button.listening {
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  box-shadow: 0 0 20px rgba(245, 87, 108, 0.6);
+  animation: pulse 1.5s infinite;
+}
+
+@keyframes pulse {
+  0%, 100% {
+    box-shadow: 0 0 20px rgba(245, 87, 108, 0.6);
+  }
+  50% {
+    box-shadow: 0 0 30px rgba(245, 87, 108, 1);
+  }
+}
+
+.stt-button .icon-spinning {
+  animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+  from {
+    transform: rotate(0deg);
+  }
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+.stt-button-compact {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 36px;
+  height: 36px;
+  padding: 0;
+  background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+  color: white;
+  border: none;
+  border-radius: 50%;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  box-shadow: 0 2px 8px rgba(245, 87, 108, 0.3);
+  font-size: 16px;
+}
+
+.stt-button-compact:hover {
+  transform: scale(1.05);
+  box-shadow: 0 4px 12px rgba(245, 87, 108, 0.5);
+}
+
+.stt-button-compact.listening {
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  box-shadow: 0 0 20px rgba(245, 87, 108, 0.6);
+  animation: pulse 1.5s infinite;
+}
+
+.stt-live-transcript {
+  margin-top: 12px;
+  padding: 12px;
+  background: rgba(245, 87, 108, 0.1);
+  border-left: 3px solid #f5576c;
+  border-radius: 4px;
+}
+
+.stt-final {
+  color: #333;
+  font-weight: 500;
+  margin: 0 0 4px 0;
+}
+
+.stt-interim {
+  color: #888;
+  font-style: italic;
+  margin: 0;
+}
+
+.stt-error {
+  display: block;
+  color: #e74c3c;
+  font-size: 12px;
+  margin-top: 4px;
+}
+
+.stt-confirmation-modal {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(0, 0, 0, 0.5);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 1000;
+  animation: fadeIn 0.3s ease;
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+.stt-confirmation-content {
+  background: white;
+  border-radius: 12px;
+  padding: 24px;
+  max-width: 500px;
+  width: 90%;
+  box-shadow: 0 10px 40px rgba(0, 0, 0, 0.2);
+  animation: slideUp 0.3s ease;
+}
+
+@keyframes slideUp {
+  from {
+    transform: translateY(20px);
+    opacity: 0;
+  }
+  to {
+    transform: translateY(0);
+    opacity: 1;
+  }
+}
+
+.stt-confirmation-content h4 {
+  margin: 0 0 16px 0;
+  font-size: 18px;
+  color: #333;
+}
+
+.stt-transcript-display {
+  background: #f8f9fa;
+  padding: 12px;
+  border-radius: 6px;
+  margin: 0 0 16px 0;
+  color: #555;
+  font-size: 14px;
+  line-height: 1.5;
+}
+
+.stt-confirmation-actions {
+  display: flex;
+  gap: 12px;
+  justify-content: flex-end;
+}
+
+.stt-confirm-btn,
+.stt-cancel-btn {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  padding: 8px 16px;
+  border: none;
+  border-radius: 6px;
+  cursor: pointer;
+  font-size: 14px;
+  font-weight: 500;
+  transition: all 0.3s ease;
+}
+
+.stt-confirm-btn {
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  color: white;
+}
+
+.stt-confirm-btn:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(102, 126, 234, 0.5);
+}
+
+.stt-cancel-btn {
+  background: #e8eef5;
+  color: #333;
+}
+
+.stt-cancel-btn:hover {
+  background: #d4dce9;
+}
+
+/* Dark mode support */
+[data-theme="dark"] .stt-confirmation-content {
+  background: #2a2a2a;
+  color: white;
+}
+
+[data-theme="dark"] .stt-transcript-display {
+  background: #1a1a1a;
+  color: #ccc;
+}
+
+[data-theme="dark"] .stt-final {
+  color: #fff;
+}
+
+[data-theme="dark"] .stt-interim {
+  color: #aaa;
+}
+
+[data-theme="dark"] .stt-cancel-btn {
+  background: #3a3a3a;
+  color: #fff;
+}
+
+[data-theme="dark"] .stt-cancel-btn:hover {
+  background: #4a4a4a;
+}
+
+/* High contrast mode */
+[data-high-contrast="true"] .stt-button,
+[data-high-contrast="true"] .stt-button-compact {
+  border: 2px solid white;
+}

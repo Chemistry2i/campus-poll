@@ -1,6 +1,9 @@
 import { createRoot } from 'react-dom/client'
 import './index.css'
 import App from './App.jsx'
+// Accessibility provider and global settings panel
+import { AccessibilityProvider } from './context/AccessibilityContext.jsx'
+import AccessibilitySettingsPanel from './components/accessibility/AccessibilitySettingsPanel.jsx'
 
 // Chart.js registration
 import {
@@ -29,7 +32,11 @@ ChartJS.register(
 );
 
 createRoot(document.getElementById('root')).render(
+  <AccessibilityProvider>
     <App />
+    {/* Global accessibility settings toggle (fixed position) */}
+    <AccessibilitySettingsPanel />
+  </AccessibilityProvider>
 )
 
 // Register Service Worker for PWA and offline support
