@@ -13,11 +13,36 @@ const {
   trackAnnouncementView
 } = require('../controllers/engagementController');
 const { protect, optionalAuth } = require('../middleware/authMiddleware');
+const { redisClient } = require('../utils/redisClient');
+
+// Redis cache middleware for GET endpoints
+function cache(keyFn, ttl = 60) {
+  return async (req, res, next) => {
+    const key = keyFn(req);
+    try {
+      const cached = await redisClient.get(key);
+      if (cached) {
+        return res.json(JSON.parse(cached));
+      }
+      const origJson = res.json.bind(res);
+      res.json = (data) => {
+        redisClient.setEx(key, ttl, JSON.stringify(data));
+        return origJson(data);
+      };
+      next();
+    } catch (err) {
+      next();
+    }
+  };
+}
 
 // @desc    Get all approved candidates (public)
 // @route   GET /api/public/candidates
 // @access  Public
-router.get('/candidates', async (req, res) => {
+router.get('/candidates', cache(req => {
+  const { election = '', position = '', search = '' } = req.query;
+  return `public:candidates:election:${election}:position:${position}:search:${search}`;
+}, 60), async (req, res) => {
   try {
     const { election, position, search } = req.query;
     
@@ -55,7 +80,7 @@ router.get('/candidates', async (req, res) => {
 // @desc    Get single candidate details (public)
 // @route   GET /api/public/candidates/:id
 // @access  Public
-router.get('/candidates/:id', async (req, res) => {
+router.get('/candidates/:id', cache(req => `public:candidates:id:${req.params.id}`, 60), async (req, res) => {
   try {
     const candidate = await Candidate.findById(req.params.id)
       .populate('election', 'title status startDate endDate description')
@@ -81,7 +106,7 @@ router.get('/candidates/:id', async (req, res) => {
 // @desc    Get candidate's campaign materials (public)
 // @route   GET /api/public/candidates/:id/materials
 // @access  Public
-router.get('/candidates/:id/materials', async (req, res) => {
+router.get('/candidates/:id/materials', cache(req => `public:candidates:${req.params.id}:materials`, 60), async (req, res) => {
   try {
     const candidate = await Candidate.findById(req.params.id);
     
@@ -103,7 +128,7 @@ router.get('/candidates/:id/materials', async (req, res) => {
 // @desc    Get all active elections with candidates (public)
 // @route   GET /api/public/elections
 // @access  Public
-router.get('/elections', async (req, res) => {
+router.get('/elections', cache(() => 'public:elections:active', 60), async (req, res) => {
   try {
     const elections = await Election.find({
       status: { $in: ['active', 'upcoming', 'ongoing'] }
@@ -125,7 +150,7 @@ router.get('/elections', async (req, res) => {
 // @desc    Get candidates for specific election (public)
 // @route   GET /api/public/elections/:id/candidates
 // @access  Public
-router.get('/elections/:id/candidates', async (req, res) => {
+router.get('/elections/:id/candidates', cache(req => `public:elections:${req.params.id}:candidates:position:${req.query.position || ''}`, 60), async (req, res) => {
   try {
     const { position } = req.query;
     
@@ -164,12 +189,12 @@ router.post('/candidates/:candidateId/questions', protect, submitQuestion);
 // @desc    Get Q&A for a candidate
 // @route   GET /api/public/candidates/:candidateId/questions
 // @access  Public (optionalAuth for like status)
-router.get('/candidates/:candidateId/questions', optionalAuth, getCandidateQuestions);
+router.get('/candidates/:candidateId/questions', cache(req => `public:candidates:${req.params.candidateId}:questions`, 60), optionalAuth, getCandidateQuestions);
 
 // @desc    Get announcements for a candidate
 // @route   GET /api/public/candidates/:candidateId/announcements
 // @access  Public (optionalAuth for like status)
-router.get('/candidates/:candidateId/announcements', optionalAuth, getCandidateAnnouncements);
+router.get('/candidates/:candidateId/announcements', cache(req => `public:candidates:${req.params.candidateId}:announcements`, 60), optionalAuth, getCandidateAnnouncements);
 
 // @desc    Toggle like on a question
 // @route   POST /api/public/questions/:questionId/like

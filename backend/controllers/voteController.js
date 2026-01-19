@@ -8,18 +8,24 @@ const { logActivity, getIpAddress, getUserAgent } = require("../utils/logActivit
 // @route   POST /api/votes
 // @access  User
 const castVote = asyncHandler(async (req, res) => {
+
+  // Use MongoDB transaction for atomicity
+  const session = await Vote.startSession();
+  session.startTransaction();
   try {
     const { electionId, position, candidateId, abstain } = req.body;
 
     if (!electionId || !position) {
-      console.log({ message: "Missing electionId or position" });
+      await session.abortTransaction();
+      session.endSession();
       return res.status(400).json({ message: "electionId and position are required" });
     }
 
     // Check if election exists
-    const election = await Election.findById(electionId);
+    const election = await Election.findById(electionId).session(session);
     if (!election) {
-      console.log({ message: "Election not found" });
+      await session.abortTransaction();
+      session.endSession();
       return res.status(400).json({ message: "Election not found" });
     }
 
@@ -29,12 +35,14 @@ const castVote = asyncHandler(async (req, res) => {
     const end = election.endDate ? new Date(election.endDate) : null;
 
     if (start && now < start) {
-      console.log({ message: 'Voting has not started yet', now, start });
+      await session.abortTransaction();
+      session.endSession();
       return res.status(403).json({ message: 'Voting has not started yet' });
     }
 
     if (end && now > end) {
-      console.log({ message: 'Voting has ended', now, end });
+      await session.abortTransaction();
+      session.endSession();
       return res.status(403).json({ message: 'Voting has ended' });
     }
 
@@ -42,9 +50,13 @@ const castVote = asyncHandler(async (req, res) => {
     if (election.allowedFaculties && election.allowedFaculties.length > 0) {
       const userFaculty = req.user.faculty;
       if (!userFaculty) {
+        await session.abortTransaction();
+        session.endSession();
         return res.status(403).json({ message: 'Your faculty information is missing. Please update your profile.' });
       }
       if (!election.allowedFaculties.includes(userFaculty)) {
+        await session.abortTransaction();
+        session.endSession();
         return res.status(403).json({ message: 'Your faculty is not eligible to participate in this election.' });
       }
     }
@@ -53,36 +65,48 @@ const castVote = asyncHandler(async (req, res) => {
     let candidate = null;
     if (!abstain) {
       if (!candidateId) {
+        await session.abortTransaction();
+        session.endSession();
         return res.status(400).json({ message: "candidateId is required unless abstaining" });
       }
-      candidate = await Candidate.findOne({ _id: candidateId, election: electionId, position });
+      candidate = await Candidate.findOne({ _id: candidateId, election: electionId, position }).session(session);
       if (!candidate) {
-        console.log({ message: "Candidate not found for this position/election" });
+        await session.abortTransaction();
+        session.endSession();
         return res.status(400).json({ message: "Candidate not found for this position/election" });
       }
     }
 
     // Check if user has already voted for this position in this election
-    const existingVote = await Vote.findOne({ user: req.user._id, election: electionId, position });
+    const existingVote = await Vote.findOne({ user: req.user._id, election: electionId, position }).session(session);
     if (existingVote) {
-      console.log({ message: "User has already voted for this position in this election" });
+      await session.abortTransaction();
+      session.endSession();
       return res.status(400).json({ message: "You have already voted for this position in this election" });
     }
 
     // Create vote
-    const vote = await Vote.create({
+    const vote = await Vote.create([{
       user: req.user._id,
       election: electionId,
       position,
       candidate: abstain ? undefined : candidateId
-    });
+    }], { session });
+
+    // Optionally increment candidate's vote count
+    if (candidate) {
+      await Candidate.updateOne({ _id: candidate._id }, { $inc: { votes: 1 } }, { session });
+    }
+
+    await session.commitTransaction();
+    session.endSession();
 
     // Log student voting activity
     await logActivity({
       userId: req.user._id,
       action: 'vote',
       entityType: 'Vote',
-      entityId: vote._id.toString(),
+      entityId: vote[0]._id.toString(),
       details: abstain 
         ? `Abstained from voting for ${position} in ${election.title}`
         : `Voted for ${candidate?.name || 'candidate'} for ${position} in ${election.title}`,
@@ -90,12 +114,6 @@ const castVote = asyncHandler(async (req, res) => {
       ipAddress: getIpAddress(req),
       userAgent: getUserAgent(req)
     });
-
-    // Optionally increment candidate's vote count
-    if (candidate) {
-      // Use atomic $inc to avoid race conditions in high concurrency
-      await Candidate.updateOne({ _id: candidate._id }, { $inc: { votes: 1 } });
-    }
 
     // Emit realtime update to connected clients
     try {

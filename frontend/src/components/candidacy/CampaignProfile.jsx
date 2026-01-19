@@ -1,4 +1,5 @@
 import React, { useState, useEffect, useRef } from 'react';
+import { sanitizeContent } from '../../utils/sanitize';
 import axios from '../../utils/axiosInstance';
 import Swal from 'sweetalert2';
 import { useTheme } from '../../contexts/ThemeContext';
@@ -449,20 +450,34 @@ const CampaignProfile = () => {
                   </div>
                   <div className="col-12">
                     <label className="form-label fw-semibold" style={{ color: colors.text }}>Biography</label>
-                    <textarea
-                      className="form-control"
-                      name="bio"
-                      value={formData.bio}
-                      onChange={handleInputChange}
-                      disabled={!editing}
-                      rows="4"
-                      placeholder="Tell voters about yourself..."
-                      style={{
-                        background: isDarkMode ? colors.surfaceHover : '#fff',
-                        color: colors.text,
-                        border: `1px solid ${colors.border}`
-                      }}
-                    />
+                    {editing ? (
+                      <textarea
+                        className="form-control"
+                        name="bio"
+                        value={formData.bio}
+                        onChange={handleInputChange}
+                        disabled={!editing}
+                        rows="4"
+                        placeholder="Tell voters about yourself..."
+                        style={{
+                          background: isDarkMode ? colors.surfaceHover : '#fff',
+                          color: colors.text,
+                          border: `1px solid ${colors.border}`
+                        }}
+                      />
+                    ) : (
+                      <div
+                        className="form-control"
+                        style={{
+                          minHeight: '80px',
+                          background: isDarkMode ? colors.surfaceHover : '#fff',
+                          color: colors.text,
+                          border: `1px solid ${colors.border}`,
+                          whiteSpace: 'pre-line'
+                        }}
+                        dangerouslySetInnerHTML={{ __html: sanitizeContent(formData.bio) }}
+                      />
+                    )}
                   </div>
                 </div>
               </div>
@@ -486,20 +501,34 @@ const CampaignProfile = () => {
               <div className="card-body p-4">
                 <div className="mb-4">
                   <label className="form-label fw-semibold" style={{ color: colors.text }}>Campaign Manifesto</label>
-                  <textarea
-                    className="form-control"
-                    name="manifesto"
-                    value={formData.manifesto}
-                    onChange={handleInputChange}
-                    disabled={!editing}
-                    rows="6"
-                    placeholder="Your vision and manifesto..."
-                    style={{
-                      background: isDarkMode ? colors.surfaceHover : '#fff',
-                      color: colors.text,
-                      border: `1px solid ${colors.border}`
-                    }}
-                  />
+                  {editing ? (
+                    <textarea
+                      className="form-control"
+                      name="manifesto"
+                      value={formData.manifesto}
+                      onChange={handleInputChange}
+                      disabled={!editing}
+                      rows="6"
+                      placeholder="Your vision and manifesto..."
+                      style={{
+                        background: isDarkMode ? colors.surfaceHover : '#fff',
+                        color: colors.text,
+                        border: `1px solid ${colors.border}`
+                      }}
+                    />
+                  ) : (
+                    <div
+                      className="form-control"
+                      style={{
+                        minHeight: '120px',
+                        background: isDarkMode ? colors.surfaceHover : '#fff',
+                        color: colors.text,
+                        border: `1px solid ${colors.border}`,
+                        whiteSpace: 'pre-line'
+                      }}
+                      dangerouslySetInnerHTML={{ __html: sanitizeContent(formData.manifesto) }}
+                    />
+                  )}
                 </div>
 
                 <div className="mb-4">

@@ -20,27 +20,49 @@ const {
 } = require('../controllers/electionController');
 
 const { protect, adminOnly } = require('../middleware/authMiddleware');
+const { redisClient } = require('../utils/redisClient');
+
+// Redis cache middleware for GET endpoints
+function cache(keyFn, ttl = 60) {
+    return async (req, res, next) => {
+        const key = keyFn(req);
+        try {
+            const cached = await redisClient.get(key);
+            if (cached) {
+                return res.json(JSON.parse(cached));
+            }
+            const origJson = res.json.bind(res);
+            res.json = (data) => {
+                redisClient.setEx(key, ttl, JSON.stringify(data));
+                return origJson(data);
+            };
+            next();
+        } catch (err) {
+            next();
+        }
+    };
+}
 
 // Admin: Create a new election
 router.post('/', protect, adminOnly, createElection);
 
-// Get all elections (admin or public)
-router.get('/', protect, getAllElections);
+// Get all elections (admin or public) with cache
+router.get('/', protect, cache(() => 'elections:all', 60), getAllElections);
 
-// Get active (ongoing) elections
-router.get('/active', protect, getActiveElections);
+// Get active (ongoing) elections with cache
+router.get('/active', protect, cache(() => 'elections:active', 60), getActiveElections);
 
-// Get upcoming elections
-router.get('/upcoming', protect, getUpcomingElections);
+// Get upcoming elections with cache
+router.get('/upcoming', protect, cache(() => 'elections:upcoming', 60), getUpcomingElections);
 
-// Get completed elections
-router.get('/completed', protect, getCompletedElections);
+// Get completed elections with cache
+router.get('/completed', protect, cache(() => 'elections:completed', 60), getCompletedElections);
 
-// Search elections by title, status, etc.
+// Search elections by title, status, etc. (no cache, dynamic)
 router.get('/search', protect, searchElections);
 
-// Get a single election by ID
-router.get('/:id', protect, getElectionById);
+// Get a single election by ID with cache
+router.get('/:id', protect, cache(req => `elections:id:${req.params.id}`, 60), getElectionById);
 
 // Admin: Update an election
 router.put('/:id', protect, adminOnly, updateElection);
@@ -51,11 +73,11 @@ router.delete('/:id', protect, adminOnly, deleteElection);
 // Admin: Publish results for an election
 router.put('/:id/publish-results', protect, adminOnly, publishResults);
 
-// Get results for an election
-router.get('/:id/results', protect, getElectionResults);
+// Get results for an election with cache
+router.get('/:id/results', protect, cache(req => `elections:results:${req.params.id}`, 60), getElectionResults);
 
-// Get all candidates for an election
-router.get('/:id/candidates', protect, getElectionCandidates);
+// Get all candidates for an election with cache
+router.get('/:id/candidates', protect, cache(req => `elections:${req.params.id}:candidates`, 60), getElectionCandidates);
 
 // Admin: Add a position to an election
 router.post('/:id/positions', protect, adminOnly, addPositionToElection);

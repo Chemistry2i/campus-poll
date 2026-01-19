@@ -1,3 +1,14 @@
+// Redis client
+const { connectRedis } = require('./utils/redisClient');
+// Enforce HTTPS in production
+if (process.env.NODE_ENV === 'production') {
+  app.use((req, res, next) => {
+    if (req.headers['x-forwarded-proto'] !== 'https') {
+      return res.redirect(301, 'https://' + req.headers.host + req.url);
+    }
+    next();
+  });
+}
 // backend/server.js
 
 // Loading environment variables
@@ -13,6 +24,7 @@ const cors = require("cors");
 const cookieParser = require("cookie-parser");
 const rateLimit = require("express-rate-limit");
 const colors = require("colors");
+const csurf = require("csurf");
 
 // Config files
 const dbConfig = require("./config/db");
@@ -48,6 +60,10 @@ const app = express();
 const PORT = process.env.PORT || 5000;
 const CORS_ORIGIN = process.env.CORS_ORIGIN || "http://localhost:3000";
 
+// --- REDIS CONNECTION ---
+connectRedis().catch((err) => {
+  console.error('[REDIS INIT ERROR]:', err);
+});
 // --- MIDDLEWARE ---
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
@@ -62,13 +78,70 @@ app.use(cors({
   ],
   credentials: true
 }));
-// app.use(rateLimit({
-//   windowMs: 15 * 60 * 1000, // 15 minutes
-//   max: 100,
-//   message: "Too many requests, please try again later.",
-//   standardHeaders: true,
-//   legacyHeaders: false,
-// }));
+
+// Custom rate limiter: higher limit for admins
+const User = require('./models/User');
+
+const { ipKeyGenerator } = require('express-rate-limit');
+const dynamicRateLimiter = rateLimit({
+  windowMs: 15 * 60 * 1000, // 15 minutes
+  max: async (req, res) => {
+    try {
+      let token;
+      if (req.cookies && req.cookies.token) {
+        token = req.cookies.token;
+      }
+      if (!token && req.headers.authorization?.startsWith('Bearer')) {
+        token = req.headers.authorization.split(' ')[1];
+      }
+      if (token) {
+        const decoded = jwt.verify(token, process.env.JWT_SECRET);
+        const user = await User.findById(decoded.id).select('role');
+        if (user && (user.role === 'admin' || user.role === 'super_admin')) {
+          return 1000; // much higher limit for admins
+        }
+      }
+    } catch (e) {}
+    return 100; // default for normal users
+  },
+  message: "Too many requests, please try again later.",
+  standardHeaders: true,
+  legacyHeaders: false,
+  keyGenerator: (req) => {
+    let token;
+    if (req.cookies && req.cookies.token) {
+      token = req.cookies.token;
+    }
+    if (!token && req.headers.authorization?.startsWith('Bearer')) {
+      token = req.headers.authorization.split(' ')[1];
+    }
+    if (token) {
+      try {
+        const decoded = jwt.decode(token);
+        if (decoded && decoded.id) return decoded.id;
+      } catch (e) {}
+    }
+    // Use express-rate-limit's ipKeyGenerator for IPv6 safety
+    return ipKeyGenerator(req);
+  }
+});
+app.use(dynamicRateLimiter);
+
+// CSRF protection (cookie-based)
+app.use(csurf({ cookie: true }));
+// --- ERROR HANDLING ---
+// Hide stack traces and sensitive info in production
+app.use((err, req, res, next) => {
+  if (err.code === 'EBADCSRFTOKEN') {
+    return res.status(403).json({ message: 'Invalid CSRF token' });
+  }
+  const status = err.status || 500;
+  const isProd = process.env.NODE_ENV === 'production';
+  res.status(status).json({
+    message: err.message || 'Server error',
+    ...(isProd ? {} : { stack: err.stack })
+  });
+});
 
 // Static files
 app.use(express.static("public"));
@@ -81,6 +154,11 @@ app.use(express.static("public"));
 // Test Route
 app.get("/", (req, res) => {
   res.send("Welcome to the University Voting System API");
+});
+
+// CSRF token endpoint for frontend
+app.get('/api/auth/csrf-token', (req, res) => {
+  res.json({ csrfToken: req.csrfToken() });
 });
 
 // Routes
@@ -123,7 +201,6 @@ app.use('/api/user', require('./routes/roleManagement'));
 const http = require('http');
 const { Server: IOServer } = require('socket.io');
 const jwt = require('jsonwebtoken');
-const User = require('./models/User');
 
 const server = http.createServer(app);
 const io = new IOServer(server, {

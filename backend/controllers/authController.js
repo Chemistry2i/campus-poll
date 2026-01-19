@@ -3,7 +3,7 @@
 // const jwt = require('jsonwebtoken');
 // const crypto = require('crypto');
 // const User = require('../models/User');
-// const sendEmail = require('../utils/sendEmail');   
+const { sendEmail, verificationEmailTemplate, passwordResetEmailTemplate } = require('../utils/sendEmail');
 // const sendSms = require('../utils/sendSms');
 
 // // Helper: Generate JWT
@@ -50,15 +50,12 @@
 //         newUser.verificationTokenExpiry = Date.now() + 1000 * 60 * 60; // 1 hour
 //         await newUser.save();
 
-//         // Send verification email
+//         // Send verification email (professional template)
 //         const verifyUrl = `https://studious-space-robot-674g6rw49gg3rxr5-5173.app.github.dev/verify/${verificationToken}`;
-//         const html = `
-//             <h2>Verify Your Email</h2>
-//             <p>Hello ${newUser.name},</p>
-//             <p>Click the link below to verify your email:</p>
-//             <a href="${verifyUrl}" target="_blank">Verify Email</a>
-//         `;
-
+//         const html = verificationEmailTemplate({
+//           userName: newUser.name,
+//           verificationLink: verifyUrl
+//         });
 //         await sendEmail({ to: newUser.email, subject: 'Verify your email', html });
 
 //         // --- SEND SMS NOTIFICATION ---
@@ -297,7 +294,6 @@ const bcrypt = require("bcryptjs");
 const jwt = require("jsonwebtoken");
 const crypto = require("crypto");
 const User = require("../models/User");
-const sendEmail = require("../utils/sendEmail");
 const sendSms = require("../utils/sendSms");
 const { logActivity, getIpAddress, getUserAgent } = require("../utils/logActivity");
 
@@ -741,16 +737,12 @@ const resendPasswordReset = asyncHandler(async (req, res) => {
     user.resetPasswordTokenExpiry = Date.now() + 1000 * 60 * 30; // 30 minutes
     await user.save();
 
-    // Send password reset email
+    // Send password reset email (professional template)
     const resetUrl = `${process.env.BASE_URL}/reset-password/${resetToken}`;
-    const html = `
-      <h2>Reset Your Password</h2>
-      <p>Hello ${user.name},</p>
-      <p>Click the link below to reset your password:</p>
-      <a href="${resetUrl}" target="_blank">Reset Password</a>
-      <p><small>This link will expire in 30 minutes.</small></p>
-    `;
-
+    const html = passwordResetEmailTemplate({
+      userName: user.name,
+      resetLink: resetUrl
+    });
     try {
       await sendEmail({
         to: user.email,
@@ -801,16 +793,12 @@ const resendVerification = asyncHandler(async (req, res) => {
     user.verificationTokenExpiry = Date.now() + 1000 * 60 * 60; // 1 hour
     await user.save();
 
-    // Send verification email
+    // Send verification email (professional template)
     const verifyUrl = `${process.env.BASE_URL}/verify/${verificationToken}`;
-    const html = `
-      <h2>Verify Your Email</h2>
-      <p>Hello ${user.name},</p>
-      <p>Click the link below to verify your email:</p>
-      <a href="${verifyUrl}" target="_blank">Verify Email</a>
-      <p><small>This link will expire in 1 hour.</small></p>
-    `;
-
+    const html = verificationEmailTemplate({
+      userName: user.name,
+      verificationLink: verifyUrl
+    });
     try {
       await sendEmail({
         to: user.email,

@@ -1,3 +1,27 @@
+// Professional email templates
+function verificationEmailTemplate({ userName, verificationLink }) {
+  return `
+    <p>Dear ${userName},</p>
+    <p>Thank you for registering with Campus Ballot.</p>
+    <p>To complete your registration and verify your email address, please click the link below:</p>
+    <p><a href="${verificationLink}">${verificationLink}</a></p>
+    <p>If you did not create an account, please ignore this email.</p>
+    <br>
+    <p>Best regards,<br>Campus Ballot Team</p>
+  `;
+}
+
+function passwordResetEmailTemplate({ userName, resetLink }) {
+  return `
+    <p>Dear ${userName},</p>
+    <p>We received a request to reset your Campus Ballot account password.</p>
+    <p>To reset your password, please click the link below. This link will expire in 30 minutes:</p>
+    <p><a href="${resetLink}">${resetLink}</a></p>
+    <p>If you did not request a password reset, you can safely ignore this email.</p>
+    <br>
+    <p>Best regards,<br>Campus Ballot Team</p>
+  `;
+}
 
 const axios = require('axios');
 
@@ -53,4 +77,8 @@ const sendEmail = async ({ to, subject, html }) => {
   }
 };
 
-module.exports = sendEmail;
+module.exports = {
+  sendEmail,
+  verificationEmailTemplate,
+  passwordResetEmailTemplate
+};

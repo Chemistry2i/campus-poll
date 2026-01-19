@@ -1,5 +1,26 @@
 const express = require('express');
 const router = express.Router();
+const { redisClient } = require('../utils/redisClient');
+
+// Redis cache middleware for GET endpoints
+function cache(key, ttl = 60) {
+  return async (req, res, next) => {
+    try {
+      const cached = await redisClient.get(key);
+      if (cached) {
+        return res.json(JSON.parse(cached));
+      }
+      const origJson = res.json.bind(res);
+      res.json = (data) => {
+        redisClient.setEx(key, ttl, JSON.stringify(data));
+        return origJson(data);
+      };
+      next();
+    } catch (err) {
+      next();
+    }
+  };
+}
 const User = require('../models/User');
 const Election = require('../models/Election');
 const Vote = require('../models/Vote');
@@ -7,7 +28,7 @@ const Candidate = require('../models/Candidate');
 const Notification = require('../models/Notification');
 const Log = require('../models/Log');
 
-router.get('/dashboard-stats', async (req, res) => {
+router.get('/dashboard-stats', cache('dashboard:stats', 60), async (req, res) => {
   try {
     // Get real stats from database
     const totalUsers = await User.countDocuments();
