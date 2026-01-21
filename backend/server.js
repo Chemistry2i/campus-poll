@@ -58,7 +58,18 @@ const app = express();
 const PORT = process.env.PORT || 5000;
 const CORS_ORIGIN = process.env.CORS_ORIGIN || "http://localhost:3000";
 
+
 // --- MIDDLEWARE ---
+// CORS should be the first middleware
+app.use(cors({
+  origin: [
+    "https://www.campusballot.tech",
+    "https://api.campusballot.tech",
+    "https://legendary-space-journey-74p9qrwrq99hpppj-5173.app.github.dev",
+    "https://legendary-space-journey-74p9qrwrq99hpppj-5000.app.github.dev"
+  ],
+  credentials: true
+}));
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 app.use(cookieParser());
@@ -110,15 +121,6 @@ app.use(
   })
 );
 app.use(morgan("dev"));
-app.use(cors({
-  origin: [
-    "https://www.campusballot.tech",
-    "https://api.campusballot.tech",
-    "https://legendary-space-journey-74p9qrwrq99hpppj-5173.app.github.dev",
-    "https://legendary-space-journey-74p9qrwrq99hpppj-5000.app.github.dev"
-  ],
-  credentials: true
-}));
 
 // --- API Response Time Tracking Middleware ---
 if (!global.__apiResponseTimes) global.__apiResponseTimes = [];
