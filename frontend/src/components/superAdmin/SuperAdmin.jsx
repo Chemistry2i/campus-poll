@@ -213,7 +213,7 @@ const SuperAdmin = ({ user, onLogout }) => {
             <div style={{
               background: '#f3f4f6',
               color: '#222',
-              borderRadius: 8,
+              borderRadius: 3,
               padding: '4px 16px',
               fontWeight: 500,
               fontSize: 14,
