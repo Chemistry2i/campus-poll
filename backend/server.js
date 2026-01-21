@@ -104,7 +104,12 @@ app.use(
       ],
       connectSrc: [
         "'self'",
-        "https://www.campusballot.tech",
+        "https://www.campusballot.tech",index-B2jFazHj.js:62 
+ POST https://api.campusballot.tech/api/auth/login net::ERR_FAILED
+
+login:1 Access to XMLHttpRequest at 'https://api.campusballot.tech/api/auth/login' from origin 'https://www.campusballot.tech' has been blocked by CORS policy: Response to preflight request doesn't pass access control check: No 'Access-Control-Allow-Origin' header is present on the requested resource.
+index-B2jFazHj.js:62 
+ POST https://api.campusballot.tech/api/auth/login net::ERR_FAILED
         "https://api.campusballot.tech"
       ],
       fontSrc: [
@@ -226,8 +231,8 @@ const server = http.createServer(app);
 const io = new IOServer(server, {
   cors: {
     origin: [
-      "https://legendary-space-journey-74p9qrwrq99hpppj-5173.app.github.dev",
-      "https://legendary-space-journey-74p9qrwrq99hpppj-5173.app.github.dev",
+      "https://www.campusballot.tech",
+      "https://www.campusballot.tech",
       CORS_ORIGIN
     ],
     methods: ["GET", "POST"],
