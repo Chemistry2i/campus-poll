@@ -26,7 +26,7 @@
 //     setError("");
 //     try {
 //       const res = await axios.post(
-//         "https://api.campusballot.tech/api/auth/login",
+//         "http://localhost:5000/api/auth/login",
 //         form
 //       );
 //       const { token, user } = res.data;
@@ -194,7 +194,7 @@ function Login({ setCurrentUser }) {
     setLoading(true);
     try {
       const res = await axios.post(
-        "https://api.campusballot.tech/api/auth/login",
+        "http://localhost:5000/api/auth/login",
         form
       );
       // Save user and token to localStorage

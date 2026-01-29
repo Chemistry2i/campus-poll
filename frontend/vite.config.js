@@ -13,12 +13,12 @@ export default defineConfig({
     },
     proxy: {
       '/api': {
-        target: 'https://api.campusballot.tech',
+        target: 'http://localhost:5000',
         changeOrigin: true,
         secure: false,
       },
       '/uploads': {
-        target: 'https://api.campusballot.tech',
+        target: 'http://localhost:5000',
         changeOrigin: true,
         secure: false,
       }

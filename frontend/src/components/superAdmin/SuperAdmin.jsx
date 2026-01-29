@@ -211,8 +211,8 @@ const SuperAdmin = ({ user, onLogout }) => {
           <div style={{ display: 'flex', alignItems: 'center', gap: 16 }}>
             {/* Time */}
             <div style={{
-              background: '#f3f4f6',
-              color: '#222',
+              background: colors.primary, // Updated to use primary color
+              color: '#fff',
               borderRadius: 3,
               padding: '4px 16px',
               fontWeight: 500,
