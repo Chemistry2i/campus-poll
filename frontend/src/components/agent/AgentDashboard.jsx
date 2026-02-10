@@ -103,6 +103,44 @@ const AgentDashboard = () => {
     }
   });
 
+  // Helper function to get candidate image URL
+  const getCandidateImageUrl = (candidate) => {
+    if (!candidate) return null;
+    
+    // Try multiple possible image fields
+    const imageUrl = candidate.candidatePhoto || 
+                     candidate.profilePicture || 
+                     candidate.photo || 
+                     candidate.image;
+    
+    console.log('[AgentDashboard] Getting image URL for candidate:', candidate.name, 'imageUrl:', imageUrl);
+    return getImageUrl(imageUrl);
+  };
+
+  // Helper function to get image URL
+  const getImageUrl = (imageUrl) => {
+    if (!imageUrl) return null;
+    if (imageUrl.startsWith('http://') || imageUrl.startsWith('https://')) {
+      return imageUrl;
+    }
+    const apiBase = import.meta.env.VITE_API_URL || '';
+    if (apiBase) {
+      const fullUrl = `${apiBase.replace(/\/$/, '')}${imageUrl}`;
+      console.log('[AgentDashboard] Constructed image URL:', fullUrl);
+      return fullUrl;
+    }
+    return imageUrl;
+  };
+
+  // Helper function to get candidate initials
+  const getCandidateInitials = (name) => {
+    if (!name) return 'C';
+    return name.trim().split(' ')
+      .map(word => word.charAt(0).toUpperCase())
+      .slice(0, 2)
+      .join('');
+  };
+
   useEffect(() => {
     fetchDashboardData();
   }, []);
@@ -117,6 +155,7 @@ const AgentDashboard = () => {
       });
       
       console.log('[AgentDashboard] Dashboard response:', dashboardResponse.data);
+      console.log('[AgentDashboard] Agent data:', dashboardResponse.data?.agent);
       
       // Fetch agent's own stats
       const statsResponse = await axios.get('/api/agent/stats', {
@@ -152,8 +191,15 @@ const AgentDashboard = () => {
         status: agent.status,
         tasks: processedTasks.filter(t => t.status !== 'completed').length,
         tasksCompleted: processedTasks.filter(t => t.status === 'completed').length,
-        joinedDate: agent.joinedDate
+        joinedDate: agent.joinedDate,
+        // Include image fields
+        candidatePhoto: agent.candidatePhoto,
+        profilePicture: agent.profilePicture,
+        photo: agent.photo,
+        image: agent.image
       }] : [];
+
+      console.log('[AgentDashboard] Constructed candidates array:', candidates);
 
       setDashboardData({
         candidates,
@@ -854,10 +900,42 @@ const AgentDashboard = () => {
                       <div className="d-flex align-items-center justify-content-between">
                         <div className="d-flex align-items-center gap-3">
                           <div
-                            className="bg-primary text-white rounded-circle d-flex align-items-center justify-content-center"
-                            style={{ width: '50px', height: '50px', fontSize: '1.2rem', fontWeight: 'bold' }}
+                            className="rounded-circle d-flex align-items-center justify-content-center"
+                            style={{
+                              width: '50px',
+                              height: '50px',
+                              fontSize: '1.2rem',
+                              fontWeight: 'bold',
+                              background: getCandidateImageUrl(candidate) ? 'transparent' : 'linear-gradient(135deg, #3b82f6, #1d4ed8)',
+                              color: '#fff',
+                              overflow: 'hidden'
+                            }}
                           >
-                            {candidate.name.split(' ').map(n => n[0]).join('')}
+                            {getCandidateImageUrl(candidate) ? (
+                              <img
+                                src={getCandidateImageUrl(candidate)}
+                                alt={candidate.name}
+                                style={{
+                                  width: '100%',
+                                  height: '100%',
+                                  objectFit: 'cover',
+                                  borderRadius: '50%'
+                                }}
+                                onError={(e) => {
+                                  e.target.style.display = 'none';
+                                  e.target.nextSibling.style.display = 'flex';
+                                }}
+                              />
+                            ) : null}
+                            <div style={{
+                              display: getCandidateImageUrl(candidate) ? 'none' : 'flex',
+                              alignItems: 'center',
+                              justifyContent: 'center',
+                              width: '100%',
+                              height: '100%'
+                            }}>
+                              {getCandidateInitials(candidate.name)}
+                            </div>
                           </div>
                           <div>
                             <h6 className="mb-1 fw-bold" style={{ color: colors.text }}>{candidate.name}</h6>

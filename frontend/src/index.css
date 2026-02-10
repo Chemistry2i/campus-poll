@@ -138,13 +138,11 @@ td{
 
 /* Mobile: reduce global font size for phones */
 @media (max-width: 576px) {
-  html, body {
-    font-size: .9em !important;
-  }
-
-  /* Tweak some common inputs to scale with the smaller base */
-  .form-control, .input-group-text, label, .btn {
-    font-size: .9em !important;
+  /* Remove global font size reduction to prevent dashboard sizing issues */
+  
+  /* Keep input scaling but remove global font reduction */
+  .form-control, .input-group-text, label {
+    font-size: 1rem !important;
   }
 
   /* Slightly reduce table cell text on small screens */
@@ -294,29 +292,26 @@ td{
   display: inline-block;
 }
 
+/* Remove forced small font sizes that affect dashboard readability */
 input, input::placeholder{
-  font-size: .9em !important;
+  font-size: 1rem !important;
 }
 
 select{
-  font-size: .9em !important;
+  font-size: 1rem !important;
 }
 
 option{
-  font-size: .9em;
+  font-size: 1rem;
 }
 
-input{
-  font-size: .9em !important;
-}
-
-/* Prevent horizontal scroll on body */
+/* Allow normal scrolling - remove overflow restrictions */
 body {
-  overflow-x: hidden !important;
+  overflow-x: auto;
 }
 
 html {
-  overflow-x: hidden !important;
+  overflow-x: auto;
 }
 
 /* Page-level helper to ensure specific pages (agent) can span full width
@@ -552,8 +547,10 @@ section .testimonial-card.card {
 
 /* Fix responsive issues for small devices (375px and below) */
 @media (max-width: 480px) {
-  /* Reduce padding on container-fluid to prevent overflow */
-  .container-fluid.px-5 {
+  /* Only apply padding reduction to landing page containers, not dashboard containers */
+  .hero-section .container-fluid.px-5,
+  #features .container-fluid.px-5,
+  #testimonials .container-fluid.px-5 {
     padding-left: 1rem !important;
     padding-right: 1rem !important;
   }
@@ -642,6 +639,105 @@ section .testimonial-card.card {
   .btn-lg {
     padding: 0.5rem 1rem !important;
     font-size: 0.95rem !important;
+  }
+}
+
+/* COMPACT DESKTOP LAYOUT (992px and above)
+   Reduces font sizes and padding to prevent content from appearing too "big" on laptops/desktops */
+@media (min-width: 992px) {
+  html {
+    font-size: 14px !important; /* Reduces base size from 16px to 14px */
+  }
+
+  /* Shrink common elements */
+  .container-fluid {
+    padding-left: 1.5rem !important;
+    padding-right: 1.5rem !important;
+  }
+
+  .card-body {
+    padding: 1.25rem !important;
+  }
+
+  .btn {
+    padding: 0.4rem 0.8rem !important;
+    font-size: 0.95rem !important;
+  }
+
+  .form-control, .input-group-text, label {
+    font-size: 0.95rem !important;
+  }
+
+  /* Compact Dashboard Cards */
+  .dashboard-card {
+    min-height: 80px !important;
+    padding: 0.5rem 0.2rem !important;
+  }
+
+  .dashboard-card-icon {
+    width: 42px !important;
+    height: 42px !important;
+    font-size: 24px !important;
+    margin-bottom: 0.3rem !important;
+  }
+
+  /* Compact Tables */
+  td, th {
+    padding: 0.6rem 0.75rem !important;
+    font-size: 0.85rem !important;
+  }
+
+  h1 { font-size: 2rem !important; }
+  h2 { font-size: 1.75rem !important; }
+  h3 { font-size: 1.5rem !important; }
+  h4 { font-size: 1.25rem !important; }
+  h5 { font-size: 1.1rem !important; }
+  h6 { font-size: 1rem !important; }
+
+  /* Better organization for main dashboard area */
+  .main-content-wrapper {
+    max-width: 1440px !important;
+    margin: 0 auto !important;
+    padding: 1.5rem 2rem !important;
+  }
+
+  /* Improved Grid for Stat Cards - Grouping them better */
+  .dashboard-cards-row {
+    display: grid !important;
+    grid-template-columns: repeat(8, 1fr) !important;
+    gap: 1rem !important;
+    overflow-x: visible !important;
+    padding: 0.5rem 0 !important;
+  }
+
+  .dashboard-card {
+    min-width: 0 !important; /* Allow shrinking in grid */
+    flex: none !important;
+    max-width: 100% !important;
+    height: 100% !important;
+    border-radius: 12px !important;
+    box-shadow: 0 2px 10px rgba(0,0,0,0.05) !important;
+    border: 1px solid rgba(0,0,0,0.08) !important;
+    padding: 1rem 0.5rem !important;
+  }
+
+  /* Better spacing between sections */
+  .dashboard-section {
+    margin-bottom: 2rem !important;
+    background: transparent !important;
+  }
+
+  /* Refine Sidebar width and alignment */
+  .sidebar {
+    width: 260px !important;
+    min-width: 260px !important;
+  }
+}
+
+/* Maintain Mobile View (991px and below stays exactly as it was) */
+@media (max-width: 991.98px) {
+  html {
+    font-size: 16px !important;
   }
 }
 
