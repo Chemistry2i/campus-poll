@@ -1976,7 +1976,7 @@ const LandingPage = () => {
                         Support
                       </div>
                       <a
-                        href="mailto:campusballot.helpdesk@gmail.com"
+                        href="mailto:support@campusballot.tech"
                         className="fw-semibold contact-value"
                         style={{
                           fontWeight: 600,
