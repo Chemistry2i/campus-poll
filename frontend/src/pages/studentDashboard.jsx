@@ -2209,8 +2209,8 @@ function StudentDashboard({ user: initialUser }) {
         style={{
           width: "100%",
           margin: 0,
-          padding: '0.6rem 1rem',
-          height: '72px',
+          padding: '0.4rem 0.75rem',
+          height: '60px',
           alignItems: 'center',
           background: isDarkMode ? colors.surface : '#0d6efd',
           borderBottom: `1px solid ${isDarkMode ? colors.border : '#0d6efd'}`,
@@ -2220,24 +2220,25 @@ function StudentDashboard({ user: initialUser }) {
           zIndex: 1000
         }}
       >
-        <div className="container-fluid" style={{ maxWidth: "100%", padding: "0 0.5rem", margin: 0 }}>
+        <div className="container-fluid" style={{ maxWidth: "100%", padding: "0 0.3rem", margin: 0 }}>
           <span className="navbar-brand d-flex align-items-center gap-2">
             {/* Hamburger menu for mobile */}
             <button
-              className="btn btn-sm me-2 d-lg-none"
+              className="btn btn-sm me-1 d-lg-none"
               onClick={() => setSidebarOpen(true)}
               aria-label="Open sidebar menu"
               style={{
                 background: isDarkMode ? colors.surfaceHover : 'rgba(255,255,255,0.2)',
                 color: isDarkMode ? colors.text : '#fff',
                 border: `1px solid ${isDarkMode ? colors.border : 'rgba(255,255,255,0.3)'}`,
+                padding: '0.25rem 0.4rem'
               }}
             >
-              <FaBars />
+              <FaBars size={12} />
             </button>
-            <FaUserGraduate size={22} className="text-white" />
-            <span className="fw-bold d-none d-md-inline text-white" style={{ fontSize: '1.2rem' }}>Student Portal</span>
-            <span className="fw-bold d-md-none text-white" style={{ fontSize: '1rem' }}>Portal</span>
+            <FaUserGraduate size={18} className="text-white" />
+            <span className="fw-bold d-none d-md-inline text-white" style={{ fontSize: '1rem' }}>Student Portal</span>
+            <span className="fw-bold d-md-none text-white" style={{ fontSize: '0.9rem' }}>Portal</span>
           </span>
           
           {/* User Actions */}
@@ -2261,11 +2262,12 @@ function StudentDashboard({ user: initialUser }) {
                 background: isDarkMode ? colors.surfaceHover : 'rgba(255,255,255,0.2)',
                 color: isDarkMode ? colors.primary : '#fff',
                 border: `1px solid ${isDarkMode ? colors.border : 'rgba(255,255,255,0.3)'}`,
-                transition: 'all 0.2s ease'
+                transition: 'all 0.2s ease',
+                padding: '0.3rem 0.5rem'
               }}
               title={isDarkMode ? 'Light Mode' : 'Dark Mode'}
             >
-              {isDarkMode ? <FaSun size={18} /> : <FaMoon size={18} />}
+              {isDarkMode ? <FaSun size={14} /> : <FaMoon size={14} />}
             </button>
 
             {/* Notifications */}
@@ -2276,11 +2278,12 @@ function StudentDashboard({ user: initialUser }) {
                   background: isDarkMode ? colors.surfaceHover : 'rgba(255,255,255,0.2)',
                   color: isDarkMode ? colors.text : '#fff',
                   border: `1px solid ${isDarkMode ? colors.border : 'rgba(255,255,255,0.3)'}`,
-                  position: 'relative'
+                  position: 'relative',
+                  padding: '0.3rem 0.5rem'
                 }}
                 data-bs-toggle="dropdown"
               >
-                <FaBell />
+                <FaBell size={14} />
                 {notifications.filter(n => !n.read).length > 0 && (
                   <span className="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger z-3">
                     {notifications.filter(n => !n.read).length}
@@ -2343,10 +2346,10 @@ function StudentDashboard({ user: initialUser }) {
               <button 
                 className="btn btn-sm p-0"
                 style={{
-                  width: 'clamp(36px, 8vw, 44px)',
-                  height: 'clamp(36px, 8vw, 44px)',
+                  width: 'clamp(28px, 6vw, 32px)',
+                  height: 'clamp(28px, 6vw, 32px)',
                   borderRadius: '50%',
-                  border: `2px solid rgba(255, 255, 255, 0.4)`,
+                  border: `1.5px solid rgba(255, 255, 255, 0.4)`,
                   overflow: 'hidden',
                   display: 'flex',
                   alignItems: 'center',
@@ -2392,7 +2395,7 @@ function StudentDashboard({ user: initialUser }) {
                     width: '100%',
                     height: '100%',
                     background: 'linear-gradient(135deg, #3b82f6, #1d4ed8)',
-                    fontSize: 'clamp(0.8rem, 2vw, 1.2rem)',
+                    fontSize: 'clamp(0.7rem, 1.5vw, 0.9rem)',
                     fontWeight: 'bold',
                     color: '#fff'
                   }}
@@ -2549,34 +2552,36 @@ function StudentDashboard({ user: initialUser }) {
         </div>
       </div>
 
-  <div className="d-flex" style={{ width: "100%", maxWidth: "100%", margin: 0, padding: 0, height: "calc(100vh - 72px)" }}>
+  <div className="d-flex" style={{ width: "100%", maxWidth: "100%", margin: 0, padding: 0, height: "calc(100vh - 60px)" }}>
         {/* Sidebar for large screens */}
         <div className="shadow-sm border-end d-none d-lg-block"
              style={{
-               width: '280px',
-               minWidth: '280px',
-               maxWidth: '280px',
+               width: '240px',
+               minWidth: '240px',
+               maxWidth: '240px',
                height: '100%',
+               maxHeight: '100vh',
                flexShrink: 0,
                overflowX: 'hidden',
+               overflowY: 'auto',
                margin: 0,
                padding: 0,
                background: isDarkMode ? colors.surface : '#fff',
                borderColor: isDarkMode ? colors.border : '#dee2e6',
              }}>
-          <div style={{ padding: '1.5rem' }}>
+          <div style={{ padding: '1rem' }}>
             {/* Student Profile Section */}
             <div style={{
-              marginBottom: '1rem',
-              padding: '1rem',
+              marginBottom: '0.75rem',
+              padding: '0.75rem',
               background: isDarkMode ? 'rgba(59, 130, 246, 0.1)' : 'rgba(59, 130, 246, 0.05)',
-              borderRadius: '12px',
+              borderRadius: '8px',
               border: `1px solid rgba(59, 130, 246, 0.2)`
             }}>
               <div
                 style={{
-                  width: '80px',
-                  height: '80px',
+                  width: '60px',
+                  height: '60px',
                   borderRadius: '50%',
                   background: user?.profilePicture ? 'transparent' : 'linear-gradient(135deg, #3b82f6, #1d4ed8)',
                   display: 'flex',
@@ -2584,11 +2589,11 @@ function StudentDashboard({ user: initialUser }) {
                   justifyContent: 'center',
                   color: '#fff',
                   fontWeight: 'bold',
-                  fontSize: '2rem',
-                  margin: '0 auto 1rem',
+                  fontSize: '1.5rem',
+                  margin: '0 auto 0.75rem',
                   overflow: 'hidden',
-                  border: `3px solid rgba(59, 130, 246, 0.3)`,
-                  boxShadow: '0 4px 12px rgba(59, 130, 246, 0.2)'
+                  border: `2px solid rgba(59, 130, 246, 0.3)`,
+                  boxShadow: '0 2px 8px rgba(59, 130, 246, 0.2)'
                 }}
               >
                 {user?.profilePicture ? (
@@ -2607,18 +2612,18 @@ function StudentDashboard({ user: initialUser }) {
                 </span>
               </div>
               <div className="text-center">
-                <div className="fw-bold" style={{ color: colors.text, fontSize: '1.1rem', marginBottom: '0.25rem' }}>
+                <div className="fw-bold" style={{ color: colors.text, fontSize: '0.95rem', marginBottom: '0.2rem' }}>
                   {user?.name || 'Student'}
                 </div>
                 <div style={{ 
-                  fontSize: '0.85rem', 
+                  fontSize: '0.75rem', 
                   color: '#3b82f6',
                   fontWeight: '500',
-                  marginBottom: '0.25rem'
+                  marginBottom: '0.2rem'
                 }}>
                   🎓 Student
                 </div>
-                <div style={{ fontSize: '0.75rem', color: colors.textSecondary }}>
+                <div style={{ fontSize: '0.7rem', color: colors.textSecondary }}>
                   {user?.email}
                 </div>
               </div>
@@ -2626,22 +2631,22 @@ function StudentDashboard({ user: initialUser }) {
 
             {/* Status Section */}
             <div style={{
-              marginBottom: '0.75rem',
-              padding: '0.75rem',
+              marginBottom: '0.5rem',
+              padding: '0.5rem',
               background: isDarkMode ? 'rgba(16, 185, 129, 0.1)' : 'rgba(16, 185, 129, 0.05)',
-              borderRadius: '8px',
+              borderRadius: '6px',
               border: `1px solid rgba(16, 185, 129, 0.2)`
             }}>
               <div className="text-center">
                 <div style={{ 
-                  fontSize: '0.75rem', 
+                  fontSize: '0.7rem', 
                   color: '#10b981',
                   fontWeight: '600',
-                  marginBottom: '0.25rem'
+                  marginBottom: '0.2rem'
                 }}>
                   🟢 Voting Enabled
                 </div>
-                <div style={{ fontSize: '0.7rem', color: colors.textSecondary }}>
+                <div style={{ fontSize: '0.65rem', color: colors.textSecondary }}>
                   Ready to participate in elections
                 </div>
               </div>
@@ -2659,15 +2664,15 @@ function StudentDashboard({ user: initialUser }) {
                       alignItems: 'center',
                       justifyContent: 'space-between',
                       width: '100%',
-                      padding: '0.6rem 0.8rem',
-                      marginBottom: '0.3rem',
-                      borderRadius: '8px',
+                      padding: '0.7rem 0.6rem',
+                      marginBottom: '0.2rem',
+                      borderRadius: '6px',
                       textDecoration: 'none',
                       border: 'none',
                       background: activeView === item.id ? colors.primary : 'transparent',
                       color: activeView === item.id ? '#fff' : colors.text,
                       transition: 'all 0.2s',
-                      fontSize: '0.85rem'
+                      fontSize: '0.8rem'
                     }}
                     onMouseEnter={(e) => {
                       if (activeView !== item.id) {
@@ -2680,8 +2685,8 @@ function StudentDashboard({ user: initialUser }) {
                       }
                     }}
                   >
-                    <span className="d-flex align-items-center gap-2">
-                      <IconComponent size={16} />
+                    <span className="d-flex align-items-center gap-1.5">
+                      <IconComponent size={14} />
                       {item.label}
                     </span>
                     {item.badge !== null && typeof item.badge !== 'object' && item.badge > 0 && (
@@ -2689,7 +2694,7 @@ function StudentDashboard({ user: initialUser }) {
                         style={{
                           background: activeView === item.id ? '#fff' : colors.primary,
                           color: activeView === item.id ? colors.primary : '#fff',
-                          fontSize: '0.7rem'
+                          fontSize: '0.65rem'
                         }}
                       >
                         {item.badge}
@@ -2703,11 +2708,11 @@ function StudentDashboard({ user: initialUser }) {
           {/* Sidebar Footer */}
           <div
             style={{
-              padding: '0.5rem 1.5rem',
+              padding: '0.4rem 1rem',
               borderTop: `1px solid ${colors.border}`,
               background: colors.surface,
               color: colors.textMuted,
-              fontSize: '0.75rem',
+              fontSize: '0.7rem',
               textAlign: 'center',
               marginTop: 'auto'
             }}
@@ -2738,7 +2743,7 @@ function StudentDashboard({ user: initialUser }) {
                 background: 'transparent',
                 border: 'none',
                 color: '#dc2626',
-                fontSize: '0.75rem',
+                fontSize: '0.7rem',
                 cursor: 'pointer',
                 display: 'flex',
                 alignItems: 'center',

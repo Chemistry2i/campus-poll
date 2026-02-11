@@ -57,23 +57,24 @@ const RoleSwitcher = ({ user, isDarkMode, colors }) => {
   const buttonStyle = {
     display: 'flex',
     alignItems: 'center',
-    gap: window.innerWidth < 768 ? '6px' : '8px',
-    padding: window.innerWidth < 768 ? '6px 12px' : '8px 16px',
-    borderRadius: window.innerWidth < 768 ? '6px' : '8px',
-    border: `1.5px solid ${isDarkMode ? 'rgba(255,255,255,0.2)' : 'rgba(0, 0, 0, 0.1)'}`,
+    gap: window.innerWidth < 768 ? '4px' : '6px',
+    padding: window.innerWidth < 768 ? '4px 8px' : '6px 10px',
+    borderRadius: window.innerWidth < 768 ? '4px' : '6px',
+    border: `1px solid ${isDarkMode ? 'rgba(255,255,255,0.2)' : 'rgba(0, 0, 0, 0.1)'}`,
     background: isDarkMode 
       ? 'linear-gradient(135deg, rgba(99, 102, 241, 0.2), rgba(139, 92, 246, 0.2))' 
       : '#ffffff',
     color: colors?.text || (isDarkMode ? '#fff' : '#1f2937'),
     cursor: 'pointer',
-    fontSize: window.innerWidth < 768 ? '12px' : '14px',
+    fontSize: window.innerWidth < 768 ? '11px' : '12px',
     fontWeight: '600',
     transition: 'all 0.2s ease',
     whiteSpace: 'nowrap',
-    minHeight: '36px',
+    minHeight: '28px',
+    maxHeight: '28px',
     boxShadow: isDarkMode 
       ? 'none'
-      : '0 2px 8px rgba(0, 0, 0, 0.1)',
+      : '0 1px 4px rgba(0, 0, 0, 0.1)',
   };
 
   const menuStyle = {
@@ -155,13 +156,13 @@ const RoleSwitcher = ({ user, isDarkMode, colors }) => {
         onClick={() => setIsOpen(!isOpen)}
         title="Switch between Student and Candidate view"
       >
-        <FaExchangeAlt style={{ fontSize: window.innerWidth < 768 ? '12px' : '14px', color: '#6366f1' }} />
+        <FaExchangeAlt style={{ fontSize: window.innerWidth < 768 ? '10px' : '11px', color: '#6366f1' }} />
         <span style={{ display: window.innerWidth < 400 ? 'none' : 'inline' }}>
           {currentRole === 'student' ? 'Student' : currentRole === 'candidate' ? 'Candidate' : 'Agent'}
         </span>
         <FaChevronDown 
           style={{ 
-            fontSize: window.innerWidth < 768 ? '10px' : '12px', 
+            fontSize: window.innerWidth < 768 ? '8px' : '9px', 
             transition: 'transform 0.2s',
             transform: isOpen ? 'rotate(180deg)' : 'rotate(0deg)'
           }} 
