@@ -2220,35 +2220,39 @@ function StudentDashboard({ user: initialUser }) {
           zIndex: 1000
         }}
       >
-        <div className="container-fluid" style={{ maxWidth: "100%", padding: "0 0.3rem", margin: 0 }}>
-          <span className="navbar-brand d-flex align-items-center gap-2">
+        <div className="container-fluid" style={{ maxWidth: "100%", padding: "0 0.25rem", margin: 0 }}>
+          <span className="navbar-brand d-flex align-items-center gap-1 gap-sm-2">
             {/* Hamburger menu for mobile */}
             <button
-              className="btn btn-sm me-1 d-lg-none"
+              className="btn btn-sm me-1 me-sm-2 d-lg-none"
               onClick={() => setSidebarOpen(true)}
               aria-label="Open sidebar menu"
               style={{
                 background: isDarkMode ? colors.surfaceHover : 'rgba(255,255,255,0.2)',
                 color: isDarkMode ? colors.text : '#fff',
                 border: `1px solid ${isDarkMode ? colors.border : 'rgba(255,255,255,0.3)'}`,
-                padding: '0.25rem 0.4rem'
+                padding: '0.25rem 0.4rem',
+                minWidth: '32px',
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'center'
               }}
             >
               <FaBars size={12} />
             </button>
-            <FaUserGraduate size={18} className="text-white" />
+            <FaUserGraduate size={18} className="text-white" style={{ flexShrink: 0 }} />
             <span className="fw-bold d-none d-md-inline text-white" style={{ fontSize: '1rem' }}>Student Portal</span>
-            <span className="fw-bold d-md-none text-white" style={{ fontSize: '0.9rem' }}>Portal</span>
           </span>
           
           {/* User Actions */}
           <div
-            className="d-flex align-items-center gap-2"
+            className="d-flex align-items-center gap-1 gap-sm-2"
             style={{
-              flexWrap: 'wrap',
-              justifyContent: 'flex-start',
-              rowGap: '0.35rem',
-              maxWidth: '75vw'
+              flexWrap: 'nowrap',
+              justifyContent: 'flex-end',
+              alignItems: 'center',
+              flex: '0 0 auto',
+              minWidth: 0
             }}
           >
             {/* Role Switcher (only shows for student-candidates) */}
